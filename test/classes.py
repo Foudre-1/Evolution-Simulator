@@ -16,7 +16,7 @@ class Grid: #Main grid class
         self.grid = np.array([[0 for i in range(self.__columns)] for i in range(self.__rows)]) #old grid generation
         self.__oldgrid = np.copy(self.grid)
         self.__cell_list = []
-        self.__random_direction = ["nothing"] #["right", "left", "up", "down"] + ["nothing" for i in range(6)]
+        self.__random_direction =  ["right", "left", "up", "down"] + ["nothing" for i in range(6)]#["nothing"]
         
     def get(self): #getter
         return f"{self.__size=}\n {self.__rows=}\n {self.__columns=}\n {self.grid=}\n {self.__random_direction=}\n {set([cell.name for cell in self.__cell_list])}"
@@ -97,16 +97,14 @@ class Grid: #Main grid class
                             self.set(current.origin[0]+row, current.origin[1]+current.pattern.shape[1], 0)
             elif choice == "right":
                 if current.origin[1] < self.__columns-current.pattern.shape[1]:
-                    if all([self.grid[current.origin[0]+i, current.origin[1]-current.pattern.shape[0]] == 0 for i in range(current.pattern.shape[0])]):
+                    if all([self.grid[current.origin[0]+i, current.origin[1]+current.pattern.shape[1]] == 0 for i in range(current.pattern.shape[0])]):
                         current.move_origin(0, 1)
                         #removing left cells
                         for row in range(current.pattern.shape[0]):
                             self.set(current.origin[0] + row, current.origin[1]-1, 0)
             elif choice == "up":
                 if current.origin[0] != 0:
-                    print([self.grid[current.origin[0]-1, current.origin[1]+i] for i in range(current.pattern.shape[1])])
-                    print([self.grid[current.origin[0]-1, current.origin[1]+i] == 0 for i in range(current.pattern.shape[1])])
-                    if all([self.grid[current.origin[0]-1, current.origin[1]+i] == 0 for i in range(current.pattern.shape[1])]):
+                    if all([self.grid[current.origin[0]-1, current.origin[1]+i]  == 0 for i in range(current.pattern.shape[1])]):
                         current.move_origin(-1, 0)
                         #Removing bottom cells
                         for column in range(current.pattern.shape[1]):
@@ -155,7 +153,7 @@ class Grid: #Main grid class
                     #pygame.draw.rect(WINDOW, COLOR, (XPOS, YPOS, XSIZE, YSIZE), width=BORDERSIZE)
                     #pygame.draw.rect(window, GREY, (row*self.__size, col*self.__size, self.__size, self.__size))
                     if self.grid[col, row] == -1:
-                        pygame.draw.rect(window, GREY1, (row*self.__size, col*self.__size, self.__size, self.__size))
+                        pass #pygame.draw.rect(window, GREY1, (row*self.__size, col*self.__size, self.__size, self.__size))
                     elif self.grid[col, row] == 0:
                         pygame.draw.rect(window, GREY1, (row*self.__size, col*self.__size, self.__size, self.__size))
                     elif self.grid[col, row] == 1:
@@ -174,6 +172,8 @@ class Grid: #Main grid class
                         pygame.draw.rect(window, BLUE3, (row*self.__size, col*self.__size, self.__size, self.__size))
                     elif self.grid[col, row] == 8:
                         pygame.draw.rect(window, BLUE4, (row*self.__size, col*self.__size, self.__size, self.__size))
+                    elif self.grid[col, row] == 9:
+                        pygame.draw.rect(window, GREEN, (row*self.__size, col*self.__size, self.__size, self.__size))
             else:
                 self.grid[col] = np.copy(self.__oldgrid[col])
         self.__oldgrid = np.copy(self.grid)
@@ -194,10 +194,13 @@ class Cell():
         self.origin = (row, column)
         self.pattern = pattern
         self.name = name
-        if name == "red":
+        if name == "blue":
             self.pattern = np.array([[1, 2], [3, 4]])
-        elif name == "blue":
-            self.pattern = np.array([[5, 6, 1], [7, 8, 2]])
+        elif name == "red":
+            self.pattern = np.array([[-1,  4, -1, -1],
+                                     [ 5,  5,  5, -1],
+                                     [ 5,  9,  8, 1],
+                                     [ 8,  8,  8, -1]])
         #elif name == "blue":
         #    self.pattern = np.array([[5, 6], [7, 8]])
     
