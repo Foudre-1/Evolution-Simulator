@@ -2,7 +2,7 @@ import pygame
 import time
 import numpy as np
 import random
-from    math import floor #libraries imports
+from math import floor #libraries imports
 
 from test.constants import FPS, GREY1, GREY2, GREEN
 from test.classes import Grid #files imports
@@ -18,7 +18,7 @@ def main():
     print(font.size("120")) #120, 68
     font_size_x, font_size_y = font.size(f"{FPS}")
     
-    grid = Grid(250) #initialise the main grid #test = 325
+    grid = Grid(100) #initialise the main grid #test = 325
     print(grid.get()) #print the grid in its list form
     
     clock = pygame.time.Clock() #for the fps counter
