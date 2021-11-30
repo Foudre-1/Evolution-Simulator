@@ -197,10 +197,10 @@ class Cell():
         if name == "red":
             self.pattern = np.array([[1, 2], [3, 4]])
         elif name == "blue":
-            self.pattern = np.array([[0, 5, 0],
-                                     [6, 9, 7],
-                                     [0, 8, 0]])
-        self.boundaries = {"left": [], "up": [], "right": [], "down": []}
+            self.pattern = np.array([[0, 9, 7],
+                                     [9, 7, 7],
+                                     [7, 7, 7]])
+        self.boundaries = {"left": [1, 0, 0], "up": [1, 0, 0], "right": [0, 0, 0], "down": [0, 0, 0]}
         #elif name == "blue":
         #    self.pattern = np.array([[5, 6], [7, 8]])
     

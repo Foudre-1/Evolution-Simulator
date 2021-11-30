@@ -18,7 +18,7 @@ def main():
     print(font.size("120")) #120, 68
     font_size_x, font_size_y = font.size(f"{FPS}")
     
-    grid = Grid(75) #initialise the main grid #test = 325
+    grid = Grid(10) #initialise the main grid #test = 325
     print(grid.get()) #print the grid in its list form
     
     clock = pygame.time.Clock() #for the fps counter
