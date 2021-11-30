@@ -104,7 +104,9 @@ def main():
             #WINDOW.fill(GREY2)
             grid.move_cell()
             grid.update_cell()
+            
         screen.blit(grid.draw_cells(WINDOW), (0, 0)) #attach the grid to the screen
+        
         pygame.draw.rect(screen, GREY1, (0, 0, font_size_x, font_size_y))
         pygame.draw.rect(screen, GREEN, (0, 0, font_size_x, font_size_y), width=5)
         screen.blit(show_fps(), (0, 0)) #attach the fps counter to the screen
