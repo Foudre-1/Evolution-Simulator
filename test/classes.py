@@ -16,7 +16,7 @@ class Grid: #Main grid class
         self.grid = np.array([[0 for i in range(self.__columns)] for i in range(self.__rows)]) #old grid generation
         self.__oldgrid = np.copy(self.grid)
         self.__cell_list = []
-        self.__random_direction =  ["right", "left", "up", "down"] + ["nothing" for i in range(6)]#["nothing"]
+        self.__random_direction = ["nothing"] #["right", "left", "up", "down"] + ["nothing" for i in range(6)]
         
     def get(self): #getter
         return f"{self.__size=}\n {self.__rows=}\n {self.__columns=}\n {self.grid=}\n {self.__random_direction=}\n {set([cell.name for cell in self.__cell_list])}"
@@ -194,13 +194,13 @@ class Cell():
         self.origin = (row, column)
         self.pattern = pattern
         self.name = name
-        if name == "blue":
+        if name == "red":
             self.pattern = np.array([[1, 2], [3, 4]])
-        elif name == "red":
-            self.pattern = np.array([[-1,  4, -1, -1],
-                                     [ 5,  5,  5, -1],
-                                     [ 5,  9,  8, 1],
-                                     [ 8,  8,  8, -1]])
+        elif name == "blue":
+            self.pattern = np.array([[0, 5, 0],
+                                     [6, 9, 7],
+                                     [0, 8, 0]])
+        self.boundaries = {"left": [], "up": [], "right": [], "down": []}
         #elif name == "blue":
         #    self.pattern = np.array([[5, 6], [7, 8]])
     
