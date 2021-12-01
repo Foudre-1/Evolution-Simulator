@@ -56,7 +56,7 @@ def main():
                             grid.set(column, row, 0)
                 if event.key == pygame.K_r:
                     print("K_r pressed")
-                    for i in range(10):
+                    for i in range(1):
                         grid.create_cell("red")
                     print(grid.get_cell_list())
                     grid.update_cell()
@@ -96,6 +96,9 @@ def main():
                     if frame >= 240:
                         frame = 240
                     print(frame)
+                if event.key == pygame.K_n:
+                    print("K_n pressed")
+                    grid.reverse_cell_list()
         
         if current_fps > FPS:
             current_fps = 1
