@@ -16,7 +16,7 @@ class Grid: #Main grid class
         self.grid = np.array([[0 for i in range(self.__columns)] for i in range(self.__rows)]) #old grid generation
         self.__oldgrid = np.copy(self.grid)
         self.__cell_list = []
-        self.__random_direction = ["nothing"] #["right", "left", "up", "down"] + ["nothing" for i in range(6)]
+        self.__random_direction = ["right", "left", "up", "down"] + ["nothing" for i in range(6)]
         
     def get(self): #getter
         return f"{self.__size=}\n {self.__rows=}\n {self.__columns=}\n {self.grid=}\n {self.__random_direction=}\n {set([cell.name for cell in self.__cell_list])}"
@@ -31,8 +31,8 @@ class Grid: #Main grid class
         #if name == "blue":
         #    self.__cell_list.append(Cell(self.__rows//2, self.__columns//2, name))
         #else:
-        #    self.__cell_list.append(Cell(random.randint(0, self.__rows-2), random.randint(0, self.__columns-2), name))
-        self.__cell_list.append(Cell(self.__rows//2, self.__columns//2, name))
+        self.__cell_list.append(Cell(random.randint(0, self.__rows-3), random.randint(0, self.__columns-3), name))
+        #    self.__cell_list.append(Cell(self.__rows//2, self.__columns//2, name))
         #self.__cell_list = self.__cell_list[::-1]
         
     def get_cell_list(self):
@@ -104,7 +104,7 @@ class Grid: #Main grid class
                                     if current.pattern[row][column] == -1:
                                         self.set(current.origin[0]+row, current.origin[1]+column, 0)
                                     self.set(current.origin[0]+current.boundaries["up"][column]-1, current.origin[1]+column, 0)
-                print(self.grid)
+                #print(self.grid)
     
     def move_cell(self):
         for current in self.__cell_list:
@@ -113,32 +113,41 @@ class Grid: #Main grid class
                 pass
             if choice == "left":
                 if current.origin[1] != 0:
-                    if all([self.grid[current.origin[0]+i, current.origin[1]-1] in (0, -1) for i in range(current.pattern.shape[0])]):
-                        current.move_origin(0, -1)
-                        #removing right cells
-                        for row in range(current.pattern.shape[0]):
-                            self.set(current.origin[0]+row, current.origin[1]+current.pattern.shape[1], 0)
+                        if all([self.grid[current.origin[0]+i, current.origin[1]+current.boundaries["left"][i]-1] in (0, -1) for i in range(current.pattern.shape[0])]):
+                            current.move_origin(0, -1)
+                            for row in range(current.pattern.shape[0]):
+                                for column in range(current.pattern.shape[1]):
+                                    if current.pattern[row][column] == -1:
+                                        self.set(current.origin[0]+row, current.origin[1]+column, 0)
+                                    self.set(current.origin[0]+row, current.origin[1]+current.pattern.shape[1]-current.boundaries["right"][row], 0)
             elif choice == "right":
                 if current.origin[1] < self.__columns-current.pattern.shape[1]:
-                    if all([self.grid[current.origin[0]+i, current.origin[1]+current.pattern.shape[1]] in (0, -1) for i in range(current.pattern.shape[0])]):
+                    print(current.origin)
+                    if all([self.grid[current.origin[0]+i, current.origin[1]+current.pattern.shape[1]-current.boundaries["right"][i]] in (0, -1) for i in range(current.pattern.shape[0])]):
                         current.move_origin(0, 1)
-                        #removing left cells
                         for row in range(current.pattern.shape[0]):
-                            self.set(current.origin[0] + row, current.origin[1]-1, 0)
+                            for column in range(current.pattern.shape[1]):
+                                if current.pattern[row][column] == -1:
+                                    self.set(current.origin[0]+row, current.origin[1]+column, 0)
+                                self.set(current.origin[0]+row, current.origin[1]+current.boundaries["left"][row]-1, 0)
             elif choice == "up":
                 if current.origin[0] != 0:
-                    if all([self.grid[current.origin[0]-1, current.origin[1]+i]  in (0, -1) for i in range(current.pattern.shape[1])]):
+                    if all([self.grid[current.origin[0]+current.boundaries["up"][i]-1, current.origin[1]+i] in (0, -1) for i in range(current.pattern.shape[1])]):
                         current.move_origin(-1, 0)
-                        #Removing bottom cells
-                        for column in range(current.pattern.shape[1]):
-                            self.set(current.origin[0]+current.pattern.shape[0], current.origin[1]+column, 0)
+                        for row in range(current.pattern.shape[0]):
+                            for column in range(current.pattern.shape[1]):
+                                if current.pattern[row][column] == -1:
+                                    self.set(current.origin[0]+row, current.origin[1]+column, 0)
+                                self.set(current.origin[0]+current.pattern.shape[0]-current.boundaries["down"][column], current.origin[1]+column, 0)
             elif choice == "down":
                 if current.origin[0] < self.__rows-current.pattern.shape[0]:
-                    if all([self.grid[current.origin[0]+current.pattern.shape[0], current.origin[1]+i] in (0, -1) for i in range(current.pattern.shape[1])]):
+                    if all([self.grid[current.origin[0]+current.pattern.shape[0]-current.boundaries["down"][i], current.origin[1]+i] in (0, -1) for i in range(current.pattern.shape[1])]):
                         current.move_origin(1, 0)
-                        #Removing top cells
-                        for column in range(current.pattern.shape[1]):
-                            self.set(current.origin[0]-1, current.origin[1]+column, 0)
+                        for row in range(current.pattern.shape[0]):
+                            for column in range(current.pattern.shape[1]):
+                                if current.pattern[row][column] == -1:
+                                    self.set(current.origin[0]+row, current.origin[1]+column, 0)
+                                self.set(current.origin[0]+current.boundaries["up"][column]-1, current.origin[1]+column, 0)
        
     def old_draw_cells(self, window): #Basically convert numbers to colored squares of the right size
         for col in range(self.grid.shape[0]):
