@@ -16,7 +16,7 @@ class Grid: #Main grid class
         self.grid = np.array([[0 for i in range(self.__columns)] for i in range(self.__rows)]) #old grid generation
         self.__oldgrid = np.copy(self.grid)
         self.__cell_list = []
-        self.__random_direction = ["right", "left", "up", "down"] + ["nothing" for i in range(6)]
+        self.__random_direction = ["nothing"] #["right", "left", "up", "down"] + ["nothing" for i in range(6)]
         
     def get(self): #getter
         return f"{self.__size=}\n {self.__rows=}\n {self.__columns=}\n {self.grid=}\n {self.__random_direction=}\n {set([cell.name for cell in self.__cell_list])}"
@@ -31,7 +31,7 @@ class Grid: #Main grid class
         #if name == "blue":
         #    self.__cell_list.append(Cell(self.__rows//2, self.__columns//2, name))
         #else:
-        self.__cell_list.append(Cell(random.randint(0, self.__rows-3), random.randint(0, self.__columns-3), name))
+        self.__cell_list.append(Cell(random.randint(0, self.__rows), random.randint(0, self.__columns), name))
         #    self.__cell_list.append(Cell(self.__rows//2, self.__columns//2, name))
         #self.__cell_list = self.__cell_list[::-1]
         
@@ -219,13 +219,15 @@ class Cell():
         if name == "red":
             self.pattern = np.array([[-1, 1, -1],
                                      [1, 9, 1],
-                                     [-1, 1, -1]])
+                                     [-1, 1, -1],
+                                     [-1, -1, -1],
+                                     [1, 1, 1]])
         if name == "blue":
-            self.pattern = np.array([[5, 6], [7, 8]])
+            self.pattern = np.array([[5, 6, 5]])
         if name == "red":
-            self.boundaries = {"left": [1, 0, 1], "up": [1, 0, 1], "right": [1, 0, 1], "down": [1, 0, 1]}
+            self.boundaries = {"left": [1, 0, 1, 3, 0], "up": [1, 0, 1], "right": [1, 0, 1, 3, 0], "down": [1, 1, 1]}
         elif name == "blue":
-            self.boundaries = {"left": [0, 0], "up": [0, 0], "right": [0, 0], "down": [0, 0]}
+            self.boundaries = {"left": [0], "up": [0, 0, 0], "right": [0], "down": [0, 0, 0]}
         #elif name == "blue":
         #    self.pattern = np.array([[5, 6], [7, 8]])
     
