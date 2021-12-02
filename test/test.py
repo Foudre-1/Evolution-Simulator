@@ -1,8 +1,4 @@
-import numpy as np
+l = [1, 2, 3, 4, 5]
 
-l = np.array([[1,2,3],
-             [4,5,6],
-             [7,8,9]])
-
-
-print(l[:, -1])
+if -1 in (1, 2, 3):
+    print("ok")
