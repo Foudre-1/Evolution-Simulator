@@ -22,14 +22,14 @@ def main():
     print(grid.get()) #print the grid in its list form
     
     clock = pygame.time.Clock() #for the fps counter
-    def show_fps():
+    def show_fps(): 
         fpst = str(floor(clock.get_fps()))
         fps = font.render(fpst, 1, pygame.Color("Coral"))
         return fps
     
     WINDOW.fill(GREY2)
     run = True #condition to run the game loop
-    grid.create_cell("blue")
+    grid.create_cell()
     current_fps = 1
     frame = 1
     while run:
@@ -56,8 +56,8 @@ def main():
                             grid.set(column, row, 0)
                 if event.key == pygame.K_r:
                     print("K_r pressed")
-                    for i in range(1):
-                        grid.create_cell("red")
+                    for i in range(100):
+                        grid.create_cell("test")
                     print(grid.get_cell_list())
                     grid.update_cell()
                     grid.get()

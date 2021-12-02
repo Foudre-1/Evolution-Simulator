@@ -1,4 +1,4 @@
-#colors
+#old colors
 GREEN = (0, 255, 0)
 
 RED1 = (255, 0, 0)
@@ -19,3 +19,16 @@ GREY1 = (38, 38, 38)
 
 #other
 FPS = 240
+
+#colors
+FOOD = (81, 128, 25)
+BONE = (227, 218, 201)
+PRODUCER = (212, 91, 18)
+EATER = (0, 153, 204)
+
+"""
+nothing = -1
+food = 1
+bone = 2
+producer = 3
+"""
