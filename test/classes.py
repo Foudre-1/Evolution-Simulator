@@ -18,7 +18,7 @@ class Grid: #Main grid class
         self.cell_list = []
         self.food_list = []
         self.random_direction = ["nothing"] #["right", "left", "up", "down"] + ["nothing" for i in range(6)]
-        self.random_food = ["left", "up", "right", "down"] + ["nothing" for i in range(750)]
+        self.random_food = ["left", "up", "right", "down"] + ["nothing" for i in range(10000)]
         
     def get(self): #getter
         return f"{self.size=}\n {self.rows=}\n {self.columns=}\n {self.grid=}\n {self.random_direction=}\n {set([cell.name for cell in self.cell_list])}"
