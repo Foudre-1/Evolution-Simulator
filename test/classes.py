@@ -18,6 +18,7 @@ class Grid: #Main grid class
         self.cell_list = []
         self.food_list = []
         self.random_direction = ["nothing"] #["right", "left", "up", "down"] + ["nothing" for i in range(6)]
+        self.random_food = ["left", "up", "right", "down"] + ["nothing" for i in range(750)]
         
     def get(self): #getter
         return f"{self.size=}\n {self.rows=}\n {self.columns=}\n {self.grid=}\n {self.random_direction=}\n {set([cell.name for cell in self.cell_list])}"
@@ -32,11 +33,11 @@ class Grid: #Main grid class
         if name == "test":
             self.cell_list.append(Cell(random.randint(0, self.rows), random.randint(0, self.columns), name))
         else:
-            self.cell_list.append(Cell(0, 0, name))
-            #self.cell_list.append(Cell(self.rows//2, self.columns//2, name))
+            #self.cell_list.append(Cell(-2, 0, name))
+            self.cell_list.append(Cell(self.rows//2, self.columns//2, name))
     
-    def create_food(self):
-        pass
+    def create_food(self, row, column):
+        self.food_list.append(Food(row, column))
      
     def get_cell_list(self):
         return self.cell_list
@@ -47,6 +48,9 @@ class Grid: #Main grid class
         print(self.cell_list)
     
     def update_cell(self):
+        for current in self.food_list:
+            self.set(current.row, current.column, 1)
+            
         for current in self.cell_list:
             for row in range(current.pattern.shape[0]): #current.pattern.shape[0] is the lines
                 for column in range(current.pattern.shape[1]): #current.pattern.shape[1] is the columns
@@ -61,39 +65,41 @@ class Grid: #Main grid class
                             self.set(row + current.origin[0], column + current.origin[1], current.pattern[row][column])
                         else:
                             pass
-        for current in self.food_list:
-            print(current.name)
         
-        """
         for row in range(self.grid.shape[0]):
             for col in range(self.grid.shape[1]):
                 if self.grid[row][col] == 3:
-                    r = random.choice(["left", "up", "right", "down"] + ["nothing" for i in range(0)])
+                    r = random.choice(self.random_food)
                     if r == "left":
-                        print("GAUCHE")
+                        #print("GAUCHE")
                         if col > 0:
                             if self.grid[row][col-1] == 0:
-                                self.set(row, col-1, 1)
+                                self.create_food(row, col-1)
                     if r == "up":
-                        print("HAUT")
-                        if self.grid[row-1][col] == 0:
-                            self.set(row-1, col, 1)
+                        #print("HAUT")
+                        if row > 0:
+                            if self.grid[row-1][col] == 0:
+                                self.create_food(row-1, col)
                     if r == "right":
-                        print("DROITE")
-                        if self.grid[row][col+1] == 0:
-                            self.set(row, col+1, 1)
+                        #print("DROITE")
+                        if col < self.columns-1:
+                            if self.grid[row][col+1] == 0:
+                                self.create_food(row, col+1)
                     if r == "down":
-                        print("BAS")
-                        if self.grid[row+1][col] == 0:
-                            self.set(row+1, col, 1)
-        """            
-        #print(self.grid)
+                        #print("BAS")
+                        if row < self.rows-1:
+                            if self.grid[row+1][col] == 0:
+                                self.create_food(row+1, col)
     
     def old_move_cell(self, direction):
         for current in self.cell_list:
             if current.name == "starter":
                 if direction == "left":
                     if current.origin[1] != 0:
+                        #print([current.boundaries["left"][i]-1 for i in range(current.pattern.shape[0])])
+                        #print([self.grid[current.origin[0]+i, current.origin[1]+current.boundaries["left"][i]-1] for i in range(current.pattern.shape[0])])
+                        #print([self.grid[current.origin[0]+i, current.origin[1]+current.boundaries["left"][i]-1] in (0, -1) for i in range(current.pattern.shape[0])])
+                        #print(all([self.grid[current.origin[0]+i, current.origin[1]+current.boundaries["left"][i]-1] in (0, -1) for i in range(current.pattern.shape[0])]))
                         if all([self.grid[current.origin[0]+i, current.origin[1]+current.boundaries["left"][i]-1] in (0, -1) for i in range(current.pattern.shape[0])]):
                             current.move_origin(0, -1)
                             for row in range(current.pattern.shape[0]):
@@ -102,8 +108,8 @@ class Grid: #Main grid class
                                         self.set(current.origin[0]+row, current.origin[1]+column, 0)
                                     self.set(current.origin[0]+row, current.origin[1]+current.pattern.shape[1]-current.boundaries["right"][row], 0)
                 elif direction == "right":
+                    print(current.pattern.shape[1])
                     if current.origin[1] < self.columns-current.pattern.shape[1]:
-                        print(current.origin)
                         if all([self.grid[current.origin[0]+i, current.origin[1]+current.pattern.shape[1]-current.boundaries["right"][i]] in (0, -1) for i in range(current.pattern.shape[0])]):
                             current.move_origin(0, 1)
                             for row in range(current.pattern.shape[0]):
@@ -229,7 +235,7 @@ class Grid: #Main grid class
         return window
  
 class Cell():
-    def __init__(self, row, column, name="starter", pattern=np.array([[3, 2, 3], [-1, 4, -1]]), boundaries={"left": [0, 1], "up": [0, 0, 0], "right": [0, -1], "down": [-1, 0, -1]}):
+    def __init__(self, row, column, name="starter", pattern=np.array([[3, 2, 3], [-1, 4, -1]]), boundaries={"left": [0, 1], "up": [0, 0, 0], "right": [0, 1], "down": [1, 0, 1]}):
         self.origin = (row, column)
         self.pattern = pattern
         self.name = name
@@ -256,7 +262,6 @@ class Cell():
         self.origin = (self.origin[0] + column, self.origin[1] + row)
         
 class Food():
-    def __init__(self, row, column, name):
+    def __init__(self, row, column):
         self.row = row
         self.column = column
-        self.name = name

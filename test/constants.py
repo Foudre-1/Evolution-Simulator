@@ -27,7 +27,7 @@ PRODUCER = (212, 91, 18)
 EATER = (0, 153, 204)
 
 """
-nothing = -1
+nothing = 0 and -1
 food = 1
 bone = 2
 producer = 3
