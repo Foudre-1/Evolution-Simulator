@@ -18,7 +18,7 @@ class Grid: #Main grid class
         self.cell_list = []
         self.food_list = []
         self.random_direction = ["nothing"] #["right", "left", "up", "down"] + ["nothing" for i in range(6)]
-        self.random_food = ["left", "up", "right", "down"] + ["nothing" for i in range(10000)]
+        self.random_food = ["left"] + ["nothing" for i in range(100)]
         
     def get(self): #getter
         return f"{self.size=}\n {self.rows=}\n {self.columns=}\n {self.grid=}\n {self.random_direction=}\n {set([cell.name for cell in self.cell_list])}"
@@ -66,6 +66,16 @@ class Grid: #Main grid class
                         else:
                             pass
         
+        for food in self.food_list:
+            if food.column+1 == 3:
+                print(food)
+                self.food_list.remove(food)
+                self.set(food.row,food.column, 0)
+                del food
+            """if self.grid[row][col] == 4: #self.food_amount = 0
+                if self.grid[row][col-1] == 1:
+                    pass"""
+                            
         for row in range(self.grid.shape[0]):
             for col in range(self.grid.shape[1]):
                 if self.grid[row][col] == 3:
@@ -265,3 +275,4 @@ class Food():
     def __init__(self, row, column):
         self.row = row
         self.column = column
+        self.food_amount = 0

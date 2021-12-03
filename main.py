@@ -18,7 +18,7 @@ def main():
     print(font.size("120")) #120, 68
     font_size_x, font_size_y = font.size(f"{FPS}")
     
-    grid = Grid(10) #initialise the main grid #test = 325
+    grid = Grid(100) #initialise the main grid #test = 325
     print(grid.get()) #print the grid in its list form
     
     clock = pygame.time.Clock() #for the fps counter
@@ -56,7 +56,7 @@ def main():
                             grid.set(column, row, 0)
                 if event.key == pygame.K_r: 
                     print("K_r pressed")
-                    for i in range(500):
+                    for i in range(1):
                         grid.create_cell("test")
                     grid.update_cell()
                 if event.key == pygame.K_RIGHT:

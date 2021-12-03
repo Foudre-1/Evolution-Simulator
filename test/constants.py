@@ -31,4 +31,5 @@ nothing = 0 and -1
 food = 1
 bone = 2
 producer = 3
+EATER = 4
 """
