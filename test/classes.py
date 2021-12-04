@@ -2,7 +2,7 @@ import pygame
 import math #libraries imports
 import numpy as np
 import random
-from .constants import FOOD, EATER, BONE, PRODUCER, BLUE1, BLUE2, BLUE3, BLUE4, GREY1, GREY2, RED1, RED2, RED3, RED4 #files imports
+from .constants import FOOD, EATER, BONE, PRODUCER, TEST, BLUE1, BLUE2, BLUE3, BLUE4, GREY1, GREY2, RED1, RED2, RED3, RED4 #files imports
 
 class Grid: #Main grid class
     def __init__(self, size):
@@ -18,7 +18,7 @@ class Grid: #Main grid class
         self.cell_list = []
         self.food_list = []
         self.random_direction = ["nothing"] #["right", "left", "up", "down"] + ["nothing" for i in range(6)]
-        self.random_food = ["left"] + ["nothing" for i in range(100)]
+        self.random_food = ["nothing"] #["left", "up", "right", "down"] + ["nothing" for i in range(1000000)]
         
     def get(self): #getter
         return f"{self.size=}\n {self.rows=}\n {self.columns=}\n {self.grid=}\n {self.random_direction=}\n {set([cell.name for cell in self.cell_list])}"
@@ -31,9 +31,9 @@ class Grid: #Main grid class
         
     def create_cell(self, name="starter"):
         if name == "test":
-            self.cell_list.append(Cell(random.randint(0, self.rows), random.randint(0, self.columns), name))
+            self.cell_list.append(Cell(random.randint(0, self.rows-2), random.randint(0, self.columns-3), name))
         else:
-            #self.cell_list.append(Cell(-2, 0, name))
+            #self.cell_list.append(Cell(8, 0, name))
             self.cell_list.append(Cell(self.rows//2, self.columns//2, name))
     
     def create_food(self, row, column):
@@ -66,16 +66,57 @@ class Grid: #Main grid class
                         else:
                             pass
         
+        for current in self.cell_list:
+            if current.food_amount == -1:
+                pass
+            else:
+                temp_food = 0
+                for eater in current.eater:
+                    if eater[1]+current.origin[1] > 0:
+                        if self.grid[eater[0]+current.origin[0]][eater[1]+current.origin[1]-1] == 1:
+                            print("food left")
+                            temp_food = 1
+                    if eater[0]+current.origin[0] > 0:
+                        if self.grid[eater[0]+current.origin[0]-1][eater[1]+current.origin[1]] == 1:
+                            print("food up")
+                            temp_food = 1
+                    if eater[1]+current.origin[1] < self.columns-1:
+                        if self.grid[eater[0]+current.origin[0]][eater[1]+current.origin[1]+1] == 1:
+                            print("food right")
+                            temp_food = 1
+                    if eater[0]+current.origin[0] < self.rows-1:
+                        if self.grid[eater[0]+current.origin[0]+1][eater[1]+current.origin[1]] == 1:
+                            print("food down")
+                            temp_food = 1
+                if temp_food == 1:
+                    current.food_amount += 1
+            #if current.name == "starter":
+            #    print(f"{current.food_amount=}")
+            
         for food in self.food_list:
-            if food.column+1 == 3:
-                print(food)
-                self.food_list.remove(food)
-                self.set(food.row,food.column, 0)
-                del food
-            """if self.grid[row][col] == 4: #self.food_amount = 0
-                if self.grid[row][col-1] == 1:
-                    pass"""
-                            
+            delete_list = set()
+            if food.column > 0:
+                if self.grid[food.row][food.column-1] == 4: #and 4 not in [self.grid[food.row+1][food.column], self.grid[food.row-1][food.column], self.grid[food.row][food.column+1]]:
+                    delete_list.add(food)
+                    self.set(food.row, food.column, 0)
+            if food.row > 0:
+                if self.grid[food.row-1][food.column] == 4: #and 4 not in [self.grid[food.row+1][food.column], self.grid[food.row][food.column-1], self.grid[food.row][food.column+1]]:
+                    delete_list.add(food)
+                    self.set(food.row, food.column, 0)
+            if food.column < self.columns-1:
+                if self.grid[food.row][food.column+1] == 4: #and 4 not in [self.grid[food.row+1][food.column], self.grid[food.row-1][food.column], self.grid[food.row][food.column-1]]:
+                    delete_list.add(food)
+                    self.set(food.row, food.column, 0)
+            if food.row < self.rows-1:
+                if self.grid[food.row+1][food.column] == 4: #and 4 not in [self.grid[food.row-1][food.column], self.grid[food.row][food.column+1], self.grid[food.row][food.column-1]]:
+                    delete_list.add(food)
+                    self.set(food.row, food.column, 0)
+                    
+            #print(f"{delete_list=}")
+            for delete in delete_list:
+                #print(f"{delete=}")
+                self.food_list.remove(delete)
+                
         for row in range(self.grid.shape[0]):
             for col in range(self.grid.shape[1]):
                 if self.grid[row][col] == 3:
@@ -100,6 +141,17 @@ class Grid: #Main grid class
                         if row < self.rows-1:
                             if self.grid[row+1][col] == 0:
                                 self.create_food(row+1, col)
+
+        for current in self.cell_list:
+            if current.food_amount == 2:
+                current.pattern = np.append(current.pattern, [[-2, -1, -1]], axis=0)
+                current.boundaries["left"].append(0)
+                current.boundaries["right"].append(2)
+                current.boundaries["down"] = [0, 1, 2]
+                current.food_amount = -1
+            #print(current.food_amount)
+            #print(current.pattern)
+            #print(current.boundaries)
     
     def old_move_cell(self, direction):
         for current in self.cell_list:
@@ -118,7 +170,7 @@ class Grid: #Main grid class
                                         self.set(current.origin[0]+row, current.origin[1]+column, 0)
                                     self.set(current.origin[0]+row, current.origin[1]+current.pattern.shape[1]-current.boundaries["right"][row], 0)
                 elif direction == "right":
-                    print(current.pattern.shape[1])
+                    #print(current.origin[1], self.columns-current.pattern.shape[1])
                     if current.origin[1] < self.columns-current.pattern.shape[1]:
                         if all([self.grid[current.origin[0]+i, current.origin[1]+current.pattern.shape[1]-current.boundaries["right"][i]] in (0, -1) for i in range(current.pattern.shape[0])]):
                             current.move_origin(0, 1)
@@ -133,6 +185,10 @@ class Grid: #Main grid class
                             #    #self.set(current.origin[0] + row, current.origin[1]-current.boundaries["right"][row], 5)
                 elif direction == "up":
                     if current.origin[0] != 0:
+                        print([self.grid[current.origin[0]+current.boundaries["up"][i]-1, current.origin[1]+i] for i in range(current.pattern.shape[1])])
+                        print([self.grid[current.origin[0]+current.boundaries["up"][i]-1, current.origin[1]+i] in (0, -1) for i in range(current.pattern.shape[1])])
+                        print(all([self.grid[current.origin[0]+current.boundaries["up"][i]-1, current.origin[1]+i] in (0, -1) for i in range(current.pattern.shape[1])]))
+                        
                         if all([self.grid[current.origin[0]+current.boundaries["up"][i]-1, current.origin[1]+i] in (0, -1) for i in range(current.pattern.shape[1])]):
                             current.move_origin(-1, 0)
                             for row in range(current.pattern.shape[0]):
@@ -239,17 +295,22 @@ class Grid: #Main grid class
                         pygame.draw.rect(window, PRODUCER, (row*self.size, col*self.size, self.size, self.size))
                     elif self.grid[col, row] == 4:
                         pygame.draw.rect(window, EATER, (row*self.size, col*self.size, self.size, self.size))
+                    elif self.grid[col, row] == -2:
+                        pygame.draw.rect(window, TEST, (row*self.size, col*self.size, self.size, self.size))
             else:
                 self.grid[col] = np.copy(self.oldgrid[col])
         self.oldgrid = np.copy(self.grid)
         return window
  
 class Cell():
-    def __init__(self, row, column, name="starter", pattern=np.array([[3, 2, 3], [-1, 4, -1]]), boundaries={"left": [0, 1], "up": [0, 0, 0], "right": [0, 1], "down": [1, 0, 1]}):
-        self.origin = (row, column)
+    def __init__(self, row, column, name="starter", pattern=np.array([[3, 2, 3], [-1, 4, -1], [2, -1, -1]]), boundaries={"left": [0, 1, 0], "up": [0, 0, 0], "right": [0, 1, 2], "down": [0, 1, 2]},):
+        self.origin = (row,column)
         self.pattern = pattern
         self.name = name
-        self.boundaries = boundaries
+        self.boundaries = boundaries #boundaries={"left": [0, 1, 0], "up": [0, 0, 0], "right": [0, 1, 2], "down": [0, 1, 2]}
+        self.internal_boundaries = 1#internal_boundaries={"left": [0, 1, 0], "up": [0, 0, 0], "right": [0, 1, 2], "down": [0, 1, 2]}
+        self.eater = list(zip(np.where(pattern == 4)[0], np.where(pattern == 4)[1]))
+        self.food_amount = 0
         #if name == "red":
         #    self.pattern = np.array([[-1, 1, -1],
         #                             [1, 9, 1],
@@ -275,4 +336,3 @@ class Food():
     def __init__(self, row, column):
         self.row = row
         self.column = column
-        self.food_amount = 0

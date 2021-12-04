@@ -18,7 +18,7 @@ def main():
     print(font.size("120")) #120, 68
     font_size_x, font_size_y = font.size(f"{FPS}")
     
-    grid = Grid(100) #initialise the main grid #test = 325
+    grid = Grid(50) #initialise the main grid #test = 325
     print(grid.get()) #print the grid in its list form
     
     clock = pygame.time.Clock() #for the fps counter
@@ -100,6 +100,10 @@ def main():
                 if event.key == pygame.K_b:
                     print("K_b pressed")
                     print(grid.food_list)
+                if event.key == pygame.K_v:
+                    print("K_v pressed")
+                    print(grid.create_food(grid.rows//2, grid.columns//2))
+                    print(grid.create_food(grid.rows//2, grid.columns//2+4))
         
         if current_fps > FPS:   
             current_fps = 1
